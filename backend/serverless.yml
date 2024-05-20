@@ -1,0 +1,202 @@
+service: python-pdf-chat
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  stage: dev
+  region: us-east-1
+  tracing:
+    lambda: true
+
+functions:
+  GeneratePresignedUrl:
+    handler: src/generate_presigned_url/main.handler
+    runtime: python3.11
+    timeout: 29
+    environment:
+      BUCKET: !Ref DocumentBucket
+      REGION: !Ref "AWS::Region"
+    events:
+      - httpApi:
+          path: /generate-presigned-url
+          method: get
+
+  UploadTrigger:
+    handler: src/upload_trigger/main.handler
+    runtime: python3.11
+    timeout: 29
+    events:
+      - httpApi:
+          path: /upload-trigger
+          method: get
+
+  GetDocument:
+    handler: src/get_document/main.handler
+    runtime: python3.11
+    timeout: 29
+    events:
+      - httpApi:
+          path: /get-document
+          method: get
+
+  GetAllDocuments:
+    handler: src/get_all_documents/main.handler
+    runtime: python3.11
+    timeout: 29
+    events:
+      - httpApi:
+          path: /get-all-documents
+          method: get
+  
+  AddConversation:
+    handler: src/add_conversation/main.handler
+    runtime: python3.11
+    timeout: 29
+    events:
+      - httpApi:
+          path: /add-conversation
+          method: post
+
+  GenerateEmbeddings:
+    handler: src/generate_embeddings/main.handler
+    runtime: python3.11
+    timeout: 29
+    events:
+      - httpApi:
+          path: /generate-embeddings
+          method: post
+
+  GenerateResponse:
+    handler: src/generate_response/main.handler
+    runtime: python3.11
+    timeout: 29
+    events:
+      - httpApi:
+          path: /generate-response
+          method: post
+
+resources:
+  Resources:
+    DocumentBucket:
+      Type: "AWS::S3::Bucket"
+      Properties:
+        BucketName: !Sub "${AWS::StackName}-${AWS::Region}-${AWS::AccountId}"
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders:
+                - "*"
+              AllowedMethods:
+                - GET
+                - PUT
+                - HEAD
+                - POST
+                - DELETE
+              AllowedOrigins:
+                - "*"
+        PublicAccessBlockConfiguration:
+          BlockPublicAcls: true
+          BlockPublicPolicy: true
+          IgnorePublicAcls: true
+          RestrictPublicBuckets: true
+
+    DocumentBucketPolicy:
+      Type: "AWS::S3::BucketPolicy"
+      Properties:
+        PolicyDocument:
+          Id: EnforceHttpsPolicy
+          Version: "2012-10-17"
+          Statement:
+            - Sid: EnforceHttpsSid
+              Effect: Deny
+              Principal: "*"
+              Action: "s3:*"
+              Resource:
+                - !Sub "arn:aws:s3:::${DocumentBucket}/*"
+                - !Sub "arn:aws:s3:::${DocumentBucket}"
+              Condition:
+                Bool:
+                  "aws:SecureTransport": "false"
+        Bucket: !Ref DocumentBucket
+
+    EmbeddingQueue:
+      Type: AWS::SQS::Queue
+      DeletionPolicy: Delete
+      UpdateReplacePolicy: Delete
+      Properties:
+        VisibilityTimeout: 180
+        MessageRetentionPeriod: 3600
+
+    EmbeddingQueuePolicy:
+      Type: AWS::SQS::QueuePolicy
+      Properties:
+        Queues:
+          - !Ref EmbeddingQueue
+        PolicyDocument:
+          Version: "2012-10-17"
+          Id: SecureTransportPolicy
+          Statement:
+            - Sid: AllowSecureTransportOnly
+              Effect: Deny
+              Principal: "*"
+              Action: "SQS:*"
+              Resource: "*"
+              Condition:
+                Bool:
+                  aws:SecureTransport: false
+
+    DocumentTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Delete
+      UpdateReplacePolicy: Delete
+      Properties:
+        KeySchema:
+          - AttributeName: userid
+            KeyType: HASH
+          - AttributeName: documentid
+            KeyType: RANGE
+        AttributeDefinitions:
+          - AttributeName: userid
+            AttributeType: S
+          - AttributeName: documentid
+            AttributeType: S
+        BillingMode: PAY_PER_REQUEST
+
+    MemoryTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Delete
+      UpdateReplacePolicy: Delete
+      Properties:
+        KeySchema:
+          - AttributeName: SessionId
+            KeyType: HASH
+        AttributeDefinitions:
+          - AttributeName: SessionId
+            AttributeType: S
+        BillingMode: PAY_PER_REQUEST
+
+    CognitoUserPool:
+      Type: AWS::Cognito::UserPool
+      DeletionPolicy: Delete
+      UpdateReplacePolicy: Delete
+      Properties:
+        AutoVerifiedAttributes:
+          - email
+        UsernameAttributes:
+          - email
+        AdminCreateUserConfig:
+          AllowAdminCreateUserOnly: true
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 8
+            RequireLowercase: true
+            RequireNumbers: true
+            RequireSymbols: true
+            RequireUppercase: true
+
+    CognitoUserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        UserPoolId: !Ref CognitoUserPool
+        ClientName: !Ref CognitoUserPool
+        GenerateSecret: false
