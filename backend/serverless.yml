@@ -26,54 +26,76 @@ functions:
     handler: src/upload_trigger/main.handler
     runtime: python3.11
     timeout: 29
+    environment:
+      DOCUMENT_TABLE: !Ref DocumentTable
+      MEMORY_TABLE: !Ref MemoryTable
+      QUEUE: !GetAtt EmbeddingQueue.QueueName
+      BUCKET: !Sub "${AWS::StackName}-${AWS::Region}-${AWS::AccountId}"
     events:
-      - httpApi:
-          path: /upload-trigger
-          method: get
+      - s3:
+          bucket: !Ref DocumentBucket
+          event: s3:ObjectCreated:*
+          rules:
+            - suffix: .pdf
+          existing: true
 
   GetDocument:
     handler: src/get_document/main.handler
     runtime: python3.11
     timeout: 29
+    environment:
+      DOCUMENT_TABLE: !Ref DocumentTable
+      MEMORY_TABLE: !Ref MemoryTable
     events:
       - httpApi:
-          path: /get-document
+          path: /doc/{documentid}/{conversationId}
           method: get
 
   GetAllDocuments:
     handler: src/get_all_documents/main.handler
     runtime: python3.11
     timeout: 29
+    environment:
+      DOCUMENT_TABLE: !Ref DocumentTable
     events:
       - httpApi:
-          path: /get-all-documents
+          path: /doc
           method: get
   
   AddConversation:
     handler: src/add_conversation/main.handler
     runtime: python3.11
     timeout: 29
+    environment:
+      DOCUMENT_TABLE: !Ref DocumentTable
+      MEMORY_TABLE: !Ref MemoryTable
     events:
       - httpApi:
-          path: /add-conversation
+          path: /doc/{documentid}
           method: post
 
   GenerateEmbeddings:
     handler: src/generate_embeddings/main.handler
     runtime: python3.11
     timeout: 29
+    environment:
+      DOCUMENT_TABLE: !Ref DocumentTable
+      BUCKET: !Ref DocumentBucket
     events:
-      - httpApi:
-          path: /generate-embeddings
-          method: post
+      - sqs:
+          arn: !GetAtt EmbeddingQueue.Arn
+          batchSize: 1
 
   GenerateResponse:
     handler: src/generate_response/main.handler
     runtime: python3.11
     timeout: 29
+    environment:
+      MEMORY_TABLE: !Ref MemoryTable
+      BUCKET: !Ref DocumentBucket
     events:
       - httpApi:
-          path: /generate-response
+          path: /{documentid}/{conversationid}
           method: post
 
 resources:
