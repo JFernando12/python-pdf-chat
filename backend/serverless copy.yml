@@ -1,12 +1,5 @@
 service: python-pdf-chat
-frameworkVersion: '3'
-
-custom:
-  stackName: ${self:service}-${self:provider.stage}
-  documentBucket: ${self:custom.stackName}-${self:provider.region}-${aws:accountId}
-  cognitoUserPool: !Ref CognitoUserPool
-  issuerUrl: 
-    Fn::Sub: "https://cognito-idp.${self:provider.region}.amazonaws.com/${CognitoUserPool}"
+frameworkVersion: '4'
 
 provider:
   name: aws
@@ -14,45 +7,32 @@ provider:
   region: us-east-1
   tracing:
     lambda: true
-  httpApi:
-    cors: true
-    authorizers:
-      cognitoAuthorizer:
-        identitySource: $request.header.Authorization
-        issuerUrl: ${self:custom.issuerUrl}
-        audience:
-          - !Ref CognitoUserPoolClient
-  layers:
-    - arn:aws:lambda:us-east-1:017000801446:layer:AWSLambdaPowertoolsPythonV2-Arm64:51
 
 functions:
   GeneratePresignedUrl:
     handler: src/generate_presigned_url/main.handler
     runtime: python3.11
-    architecture: arm64
     timeout: 29
     environment:
-      BUCKET: ${self:custom.documentBucket}
-      REGION: ${self:provider.region}
+      BUCKET: !Ref DocumentBucket
+      REGION: !Ref "AWS::Region"
     events:
       - httpApi:
           path: /generate-presigned-url
           method: get
-          authorizer:
-            name: cognitoAuthorizer
 
   UploadTrigger:
     handler: src/upload_trigger/main.handler
     runtime: python3.11
-    architecture: arm64
+    timeout: 29
     environment:
       DOCUMENT_TABLE: !Ref DocumentTable
       MEMORY_TABLE: !Ref MemoryTable
       QUEUE: !GetAtt EmbeddingQueue.QueueName
-      BUCKET: ${self:custom.documentBucket}
+      BUCKET: !Sub "${AWS::StackName}-${AWS::Region}-${AWS::AccountId}"
     events:
       - s3:
-          bucket: ${self:custom.documentBucket}
+          bucket: !Ref DocumentBucket
           event: s3:ObjectCreated:*
           rules:
             - suffix: .pdf
@@ -61,7 +41,6 @@ functions:
   GetDocument:
     handler: src/get_document/main.handler
     runtime: python3.11
-    architecture: arm64
     timeout: 29
     environment:
       DOCUMENT_TABLE: !Ref DocumentTable
@@ -70,13 +49,10 @@ functions:
       - httpApi:
           path: /doc/{documentid}/{conversationId}
           method: get
-          authorizer:
-            name: cognitoAuthorizer
 
   GetAllDocuments:
     handler: src/get_all_documents/main.handler
     runtime: python3.11
-    architecture: arm64
     timeout: 29
     environment:
       DOCUMENT_TABLE: !Ref DocumentTable
@@ -84,13 +60,10 @@ functions:
       - httpApi:
           path: /doc
           method: get
-          authorizer:
-            name: cognitoAuthorizer
   
   AddConversation:
     handler: src/add_conversation/main.handler
     runtime: python3.11
-    architecture: arm64
     timeout: 29
     environment:
       DOCUMENT_TABLE: !Ref DocumentTable
@@ -99,17 +72,14 @@ functions:
       - httpApi:
           path: /doc/{documentid}
           method: post
-          authorizer:
-            name: cognitoAuthorizer
 
   GenerateEmbeddings:
     handler: src/generate_embeddings/main.handler
     runtime: python3.11
-    architecture: arm64
     timeout: 29
     environment:
       DOCUMENT_TABLE: !Ref DocumentTable
-      BUCKET: ${self:custom.documentBucket}
+      BUCKET: !Ref DocumentBucket
     events:
       - sqs:
           arn: !GetAtt EmbeddingQueue.Arn
@@ -118,24 +88,21 @@ functions:
   GenerateResponse:
     handler: src/generate_response/main.handler
     runtime: python3.11
-    architecture: arm64
     timeout: 29
     environment:
       MEMORY_TABLE: !Ref MemoryTable
-      BUCKET: ${self:custom.documentBucket}
+      BUCKET: !Ref DocumentBucket
     events:
       - httpApi:
           path: /{documentid}/{conversationid}
           method: post
-          authorizer:
-            name: cognitoAuthorizer
 
 resources:
   Resources:
     DocumentBucket:
       Type: "AWS::S3::Bucket"
       Properties:
-        BucketName: ${self:custom.documentBucket}
+        BucketName: !Sub "${AWS::StackName}-${AWS::Region}-${AWS::AccountId}"
         CorsConfiguration:
           CorsRules:
             - AllowedHeaders:
@@ -166,12 +133,12 @@ resources:
               Principal: "*"
               Action: "s3:*"
               Resource:
-                - "arn:aws:s3:::${self:custom.documentBucket}/*"
-                - "arn:aws:s3:::${self:custom.documentBucket}"
+                - !Sub "arn:aws:s3:::${DocumentBucket}/*"
+                - !Sub "arn:aws:s3:::${DocumentBucket}"
               Condition:
                 Bool:
                   "aws:SecureTransport": "false"
-        Bucket: ${self:custom.documentBucket}
+        Bucket: !Ref DocumentBucket
 
     EmbeddingQueue:
       Type: AWS::SQS::Queue

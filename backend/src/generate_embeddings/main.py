@@ -22,7 +22,7 @@ def set_doc_status(user_id, document_id, status):
     )
 
 @logger.inject_lambda_context(log_event=True)
-def lambda_handler(event, context):
+def handler(event, context):
     event_body = json.loads(event["Records"][0]["body"])
     document_id = event_body["documentid"]
     user_id = event_body["user"]

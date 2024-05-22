@@ -15,7 +15,7 @@ logger = Logger()
 
 
 @logger.inject_lambda_context(log_event=True)
-def lambda_handler(event, context):
+def handler(event, context):
     user_id = event["requestContext"]["authorizer"]["claims"]["sub"]
     document_id = event["pathParameters"]["documentid"]
     conversation_id = event["pathParameters"]["conversationid"]

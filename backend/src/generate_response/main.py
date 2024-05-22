@@ -15,7 +15,7 @@ s3 = boto3.client("s3")
 logger = Logger()
 
 @logger.inject_lambda_context(log_event=True)
-def lambda_handler(event, context):
+def handler(event, context):
     event_body = json.loads(event["body"])
     file_name = event_body["fileName"]
     human_input = event_body["prompt"]

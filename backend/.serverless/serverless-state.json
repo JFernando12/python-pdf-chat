@@ -11,6 +11,25 @@
       "tracing": {
         "lambda": true
       },
+      "httpApi": {
+        "cors": true,
+        "authorizers": {
+          "cognitoAuthorizer": {
+            "identitySource": "$request.header.Authorization",
+            "issuerUrl": {
+              "Fn::Sub": "https://cognito-idp.us-east-1.amazonaws.com/${CognitoUserPool}"
+            },
+            "audience": [
+              {
+                "Ref": "CognitoUserPoolClient"
+              }
+            ]
+          }
+        }
+      },
+      "layers": [
+        "arn:aws:lambda:us-east-1:017000801446:layer:AWSLambdaPowertoolsPythonV2-Arm64:51"
+      ],
       "versionFunctions": true,
       "compiledCloudFormationTemplate": {
         "AWSTemplateFormatVersion": "2010-09-09",
@@ -238,24 +257,23 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/python-pdf-chat/dev/1716303424633-2024-05-21T14:57:04.633Z/python-pdf-chat.zip"
+                "S3Key": "serverless/python-pdf-chat/dev/1716421024077-2024-05-22T23:37:04.077Z/python-pdf-chat.zip"
               },
               "Handler": "src/generate_presigned_url/main.handler",
               "Runtime": "python3.11",
               "FunctionName": "python-pdf-chat-dev-GeneratePresignedUrl",
               "MemorySize": 1024,
               "Timeout": 29,
+              "Architectures": [
+                "arm64"
+              ],
               "TracingConfig": {
                 "Mode": "Active"
               },
               "Environment": {
                 "Variables": {
-                  "BUCKET": {
-                    "Ref": "DocumentBucket"
-                  },
-                  "REGION": {
-                    "Ref": "AWS::Region"
-                  }
+                  "BUCKET": "python-pdf-chat-dev-us-east-1-947403101409",
+                  "REGION": "us-east-1"
                 }
               },
               "Role": {
@@ -263,7 +281,10 @@
                   "IamRoleLambdaExecution",
                   "Arn"
                 ]
-              }
+              },
+              "Layers": [
+                "arn:aws:lambda:us-east-1:017000801446:layer:AWSLambdaPowertoolsPythonV2-Arm64:51"
+              ]
             },
             "DependsOn": [
               "GeneratePresignedUrlLogGroup"
@@ -276,13 +297,16 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/python-pdf-chat/dev/1716303424633-2024-05-21T14:57:04.633Z/python-pdf-chat.zip"
+                "S3Key": "serverless/python-pdf-chat/dev/1716421024077-2024-05-22T23:37:04.077Z/python-pdf-chat.zip"
               },
               "Handler": "src/upload_trigger/main.handler",
               "Runtime": "python3.11",
               "FunctionName": "python-pdf-chat-dev-UploadTrigger",
               "MemorySize": 1024,
-              "Timeout": 29,
+              "Timeout": 6,
+              "Architectures": [
+                "arm64"
+              ],
               "TracingConfig": {
                 "Mode": "Active"
               },
@@ -300,9 +324,7 @@
                       "QueueName"
                     ]
                   },
-                  "BUCKET": {
-                    "Fn::Sub": "${AWS::StackName}-${AWS::Region}-${AWS::AccountId}"
-                  }
+                  "BUCKET": "python-pdf-chat-dev-us-east-1-947403101409"
                 }
               },
               "Role": {
@@ -310,7 +332,10 @@
                   "IamRoleLambdaExecution",
                   "Arn"
                 ]
-              }
+              },
+              "Layers": [
+                "arn:aws:lambda:us-east-1:017000801446:layer:AWSLambdaPowertoolsPythonV2-Arm64:51"
+              ]
             },
             "DependsOn": [
               "UploadTriggerLogGroup"
@@ -323,13 +348,16 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/python-pdf-chat/dev/1716303424633-2024-05-21T14:57:04.633Z/python-pdf-chat.zip"
+                "S3Key": "serverless/python-pdf-chat/dev/1716421024077-2024-05-22T23:37:04.077Z/python-pdf-chat.zip"
               },
               "Handler": "src/get_document/main.handler",
               "Runtime": "python3.11",
               "FunctionName": "python-pdf-chat-dev-GetDocument",
               "MemorySize": 1024,
               "Timeout": 29,
+              "Architectures": [
+                "arm64"
+              ],
               "TracingConfig": {
                 "Mode": "Active"
               },
@@ -348,7 +376,10 @@
                   "IamRoleLambdaExecution",
                   "Arn"
                 ]
-              }
+              },
+              "Layers": [
+                "arn:aws:lambda:us-east-1:017000801446:layer:AWSLambdaPowertoolsPythonV2-Arm64:51"
+              ]
             },
             "DependsOn": [
               "GetDocumentLogGroup"
@@ -361,13 +392,16 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/python-pdf-chat/dev/1716303424633-2024-05-21T14:57:04.633Z/python-pdf-chat.zip"
+                "S3Key": "serverless/python-pdf-chat/dev/1716421024077-2024-05-22T23:37:04.077Z/python-pdf-chat.zip"
               },
               "Handler": "src/get_all_documents/main.handler",
               "Runtime": "python3.11",
               "FunctionName": "python-pdf-chat-dev-GetAllDocuments",
               "MemorySize": 1024,
               "Timeout": 29,
+              "Architectures": [
+                "arm64"
+              ],
               "TracingConfig": {
                 "Mode": "Active"
               },
@@ -383,7 +417,10 @@
                   "IamRoleLambdaExecution",
                   "Arn"
                 ]
-              }
+              },
+              "Layers": [
+                "arn:aws:lambda:us-east-1:017000801446:layer:AWSLambdaPowertoolsPythonV2-Arm64:51"
+              ]
             },
             "DependsOn": [
               "GetAllDocumentsLogGroup"
@@ -396,13 +433,16 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/python-pdf-chat/dev/1716303424633-2024-05-21T14:57:04.633Z/python-pdf-chat.zip"
+                "S3Key": "serverless/python-pdf-chat/dev/1716421024077-2024-05-22T23:37:04.077Z/python-pdf-chat.zip"
               },
               "Handler": "src/add_conversation/main.handler",
               "Runtime": "python3.11",
               "FunctionName": "python-pdf-chat-dev-AddConversation",
               "MemorySize": 1024,
               "Timeout": 29,
+              "Architectures": [
+                "arm64"
+              ],
               "TracingConfig": {
                 "Mode": "Active"
               },
@@ -421,7 +461,10 @@
                   "IamRoleLambdaExecution",
                   "Arn"
                 ]
-              }
+              },
+              "Layers": [
+                "arn:aws:lambda:us-east-1:017000801446:layer:AWSLambdaPowertoolsPythonV2-Arm64:51"
+              ]
             },
             "DependsOn": [
               "AddConversationLogGroup"
@@ -434,13 +477,16 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/python-pdf-chat/dev/1716303424633-2024-05-21T14:57:04.633Z/python-pdf-chat.zip"
+                "S3Key": "serverless/python-pdf-chat/dev/1716421024077-2024-05-22T23:37:04.077Z/python-pdf-chat.zip"
               },
               "Handler": "src/generate_embeddings/main.handler",
               "Runtime": "python3.11",
               "FunctionName": "python-pdf-chat-dev-GenerateEmbeddings",
               "MemorySize": 1024,
               "Timeout": 29,
+              "Architectures": [
+                "arm64"
+              ],
               "TracingConfig": {
                 "Mode": "Active"
               },
@@ -449,9 +495,7 @@
                   "DOCUMENT_TABLE": {
                     "Ref": "DocumentTable"
                   },
-                  "BUCKET": {
-                    "Ref": "DocumentBucket"
-                  }
+                  "BUCKET": "python-pdf-chat-dev-us-east-1-947403101409"
                 }
               },
               "Role": {
@@ -459,7 +503,10 @@
                   "IamRoleLambdaExecution",
                   "Arn"
                 ]
-              }
+              },
+              "Layers": [
+                "arn:aws:lambda:us-east-1:017000801446:layer:AWSLambdaPowertoolsPythonV2-Arm64:51"
+              ]
             },
             "DependsOn": [
               "GenerateEmbeddingsLogGroup"
@@ -472,13 +519,16 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/python-pdf-chat/dev/1716303424633-2024-05-21T14:57:04.633Z/python-pdf-chat.zip"
+                "S3Key": "serverless/python-pdf-chat/dev/1716421024077-2024-05-22T23:37:04.077Z/python-pdf-chat.zip"
               },
               "Handler": "src/generate_response/main.handler",
               "Runtime": "python3.11",
               "FunctionName": "python-pdf-chat-dev-GenerateResponse",
               "MemorySize": 1024,
               "Timeout": 29,
+              "Architectures": [
+                "arm64"
+              ],
               "TracingConfig": {
                 "Mode": "Active"
               },
@@ -487,9 +537,7 @@
                   "MEMORY_TABLE": {
                     "Ref": "MemoryTable"
                   },
-                  "BUCKET": {
-                    "Ref": "DocumentBucket"
-                  }
+                  "BUCKET": "python-pdf-chat-dev-us-east-1-947403101409"
                 }
               },
               "Role": {
@@ -497,80 +545,83 @@
                   "IamRoleLambdaExecution",
                   "Arn"
                 ]
-              }
+              },
+              "Layers": [
+                "arn:aws:lambda:us-east-1:017000801446:layer:AWSLambdaPowertoolsPythonV2-Arm64:51"
+              ]
             },
             "DependsOn": [
               "GenerateResponseLogGroup"
             ]
           },
-          "GeneratePresignedUrlLambdaVersionPZwQ1eAFuJoSuvVCihmIeB4XdctsJGhN7KE5RnyIyU": {
+          "GeneratePresignedUrlLambdaVersionN4D6vnS2JVf7wrelYgj05wLNQw6uBIpGCHs018": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GeneratePresignedUrlLambdaFunction"
               },
-              "CodeSha256": "V0RKtuq+NjnfV8m7fD20QA0rhZMxEJwedi9c/cgnV8w="
+              "CodeSha256": "WO1o/Xmjy/D0gfSP8Wq6V/F6z3ILDLoPuMlvUVCIKs8="
             }
           },
-          "UploadTriggerLambdaVersion1uu61QOnZfUKvTnFCSip4ixloSrfh04ULVwpHhMk8": {
+          "UploadTriggerLambdaVersion8nBwwrZtLhuYJyGhz4DQuF4w9KU9S0IBN1mCk17Kos": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "UploadTriggerLambdaFunction"
               },
-              "CodeSha256": "V0RKtuq+NjnfV8m7fD20QA0rhZMxEJwedi9c/cgnV8w="
+              "CodeSha256": "WO1o/Xmjy/D0gfSP8Wq6V/F6z3ILDLoPuMlvUVCIKs8="
             }
           },
-          "GetDocumentLambdaVersioneVpJjAASuowlui2WsAmp9uwGbvaeLQhbh2RMzNGQ": {
+          "GetDocumentLambdaVersionrEnbhofhuQFpQULoZiabNMFMShRwUmpk1UqArRzLGI": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GetDocumentLambdaFunction"
               },
-              "CodeSha256": "V0RKtuq+NjnfV8m7fD20QA0rhZMxEJwedi9c/cgnV8w="
+              "CodeSha256": "WO1o/Xmjy/D0gfSP8Wq6V/F6z3ILDLoPuMlvUVCIKs8="
             }
           },
-          "GetAllDocumentsLambdaVersionvmHvqxGeyXtqrOxelZB1IrHgy4Ro7rdgwY62Cpw8Lm4": {
+          "GetAllDocumentsLambdaVersion5kIiSXbLY9qxyx5SedLOdxSrkrfIY29GjxBz9MxC6BY": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GetAllDocumentsLambdaFunction"
               },
-              "CodeSha256": "V0RKtuq+NjnfV8m7fD20QA0rhZMxEJwedi9c/cgnV8w="
+              "CodeSha256": "WO1o/Xmjy/D0gfSP8Wq6V/F6z3ILDLoPuMlvUVCIKs8="
             }
           },
-          "AddConversationLambdaVersion8qyowlUSoJbh4bP8sd1aURxWp86o5mbAFo8IHAZZVK0": {
+          "AddConversationLambdaVersionJw9ujQxpbXIGbTM1s0SzsAR4Zi0qgHthooywBG6Og": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "AddConversationLambdaFunction"
               },
-              "CodeSha256": "V0RKtuq+NjnfV8m7fD20QA0rhZMxEJwedi9c/cgnV8w="
+              "CodeSha256": "WO1o/Xmjy/D0gfSP8Wq6V/F6z3ILDLoPuMlvUVCIKs8="
             }
           },
-          "GenerateEmbeddingsLambdaVersionDeR7l2djDO4Owbos6rUUkl6R0t2hAf0jRpsCtqyCHNQ": {
+          "GenerateEmbeddingsLambdaVersionEWzsp7m9x3e1YrP8iIqEJqs1FTTj8pZSqCS5r0": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GenerateEmbeddingsLambdaFunction"
               },
-              "CodeSha256": "V0RKtuq+NjnfV8m7fD20QA0rhZMxEJwedi9c/cgnV8w="
+              "CodeSha256": "WO1o/Xmjy/D0gfSP8Wq6V/F6z3ILDLoPuMlvUVCIKs8="
             }
           },
-          "GenerateResponseLambdaVersionOQAdn3llqKP9lR5zyCEKvxTFTeNipG6nOWjF7qW9eis": {
+          "GenerateResponseLambdaVersionaZcJrRaJHqQvoWXEsJzPBtqLrzrvF8dy4UPlwseFI4M": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GenerateResponseLambdaFunction"
               },
-              "CodeSha256": "V0RKtuq+NjnfV8m7fD20QA0rhZMxEJwedi9c/cgnV8w="
+              "CodeSha256": "WO1o/Xmjy/D0gfSP8Wq6V/F6z3ILDLoPuMlvUVCIKs8="
             }
           },
           "UploadTriggerCustomS31": {
@@ -588,9 +639,7 @@
                 ]
               },
               "FunctionName": "python-pdf-chat-dev-UploadTrigger",
-              "BucketName": {
-                "Ref": "DocumentBucket"
-              },
+              "BucketName": "python-pdf-chat-dev-us-east-1-947403101409",
               "BucketConfigs": [
                 {
                   "Event": "s3:ObjectCreated:*",
@@ -650,9 +699,7 @@
                               "s3",
                               "",
                               "",
-                              {
-                                "Ref": "DocumentBucket"
-                              }
+                              "python-pdf-chat-dev-us-east-1-947403101409"
                             ]
                           ]
                         },
@@ -701,7 +748,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/python-pdf-chat/dev/1716303424633-2024-05-21T14:57:04.633Z/custom-resources.zip"
+                "S3Key": "serverless/python-pdf-chat/dev/1716421024077-2024-05-22T23:37:04.077Z/custom-resources.zip"
               },
               "FunctionName": "python-pdf-chat-dev-custom-resource-existing-s3",
               "Handler": "s3/handler.handler",
@@ -745,7 +792,26 @@
             "Type": "AWS::ApiGatewayV2::Api",
             "Properties": {
               "Name": "dev-python-pdf-chat",
-              "ProtocolType": "HTTP"
+              "ProtocolType": "HTTP",
+              "CorsConfiguration": {
+                "AllowHeaders": [
+                  "Content-Type",
+                  "X-Amz-Date",
+                  "Authorization",
+                  "X-Api-Key",
+                  "X-Amz-Security-Token",
+                  "X-Amz-User-Agent",
+                  "X-Amzn-Trace-Id"
+                ],
+                "AllowMethods": [
+                  "OPTIONS",
+                  "GET",
+                  "POST"
+                ],
+                "AllowOrigins": [
+                  "*"
+                ]
+              }
             }
           },
           "HttpApiStage": {
@@ -758,6 +824,29 @@
               "AutoDeploy": true,
               "DefaultRouteSettings": {
                 "DetailedMetricsEnabled": false
+              }
+            }
+          },
+          "HttpApiAuthorizerCognitoAuthorizer": {
+            "Type": "AWS::ApiGatewayV2::Authorizer",
+            "Properties": {
+              "ApiId": {
+                "Ref": "HttpApi"
+              },
+              "Name": "cognitoAuthorizer",
+              "IdentitySource": [
+                "$request.header.Authorization"
+              ],
+              "AuthorizerType": "JWT",
+              "JwtConfiguration": {
+                "Audience": [
+                  {
+                    "$ref": "$[\"service\"][\"provider\"][\"httpApi\"][\"authorizers\"][\"cognitoAuthorizer\"][\"audience\"][0]"
+                  }
+                ],
+                "Issuer": {
+                  "$ref": "$[\"service\"][\"provider\"][\"httpApi\"][\"authorizers\"][\"cognitoAuthorizer\"][\"issuerUrl\"]"
+                }
               }
             }
           },
@@ -829,6 +918,10 @@
                     }
                   ]
                 ]
+              },
+              "AuthorizationType": "JWT",
+              "AuthorizerId": {
+                "Ref": "HttpApiAuthorizerCognitoAuthorizer"
               }
             },
             "DependsOn": "HttpApiIntegrationGeneratePresignedUrl"
@@ -901,6 +994,10 @@
                     }
                   ]
                 ]
+              },
+              "AuthorizationType": "JWT",
+              "AuthorizerId": {
+                "Ref": "HttpApiAuthorizerCognitoAuthorizer"
               }
             },
             "DependsOn": "HttpApiIntegrationGetDocument"
@@ -973,6 +1070,10 @@
                     }
                   ]
                 ]
+              },
+              "AuthorizationType": "JWT",
+              "AuthorizerId": {
+                "Ref": "HttpApiAuthorizerCognitoAuthorizer"
               }
             },
             "DependsOn": "HttpApiIntegrationGetAllDocuments"
@@ -1045,6 +1146,10 @@
                     }
                   ]
                 ]
+              },
+              "AuthorizationType": "JWT",
+              "AuthorizerId": {
+                "Ref": "HttpApiAuthorizerCognitoAuthorizer"
               }
             },
             "DependsOn": "HttpApiIntegrationAddConversation"
@@ -1117,6 +1222,10 @@
                     }
                   ]
                 ]
+              },
+              "AuthorizationType": "JWT",
+              "AuthorizerId": {
+                "Ref": "HttpApiAuthorizerCognitoAuthorizer"
               }
             },
             "DependsOn": "HttpApiIntegrationGenerateResponse"
@@ -1124,9 +1233,7 @@
           "DocumentBucket": {
             "Type": "AWS::S3::Bucket",
             "Properties": {
-              "BucketName": {
-                "Fn::Sub": "${AWS::StackName}-${AWS::Region}-${AWS::AccountId}"
-              },
+              "BucketName": "python-pdf-chat-dev-us-east-1-947403101409",
               "CorsConfiguration": {
                 "CorsRules": [
                   {
@@ -1167,12 +1274,8 @@
                     "Principal": "*",
                     "Action": "s3:*",
                     "Resource": [
-                      {
-                        "Fn::Sub": "arn:aws:s3:::${DocumentBucket}/*"
-                      },
-                      {
-                        "Fn::Sub": "arn:aws:s3:::${DocumentBucket}"
-                      }
+                      "arn:aws:s3:::python-pdf-chat-dev-us-east-1-947403101409/*",
+                      "arn:aws:s3:::python-pdf-chat-dev-us-east-1-947403101409"
                     ],
                     "Condition": {
                       "Bool": {
@@ -1182,9 +1285,7 @@
                   }
                 ]
               },
-              "Bucket": {
-                "Ref": "DocumentBucket"
-              }
+              "Bucket": "python-pdf-chat-dev-us-east-1-947403101409"
             }
           },
           "EmbeddingQueue": {
@@ -1322,7 +1423,7 @@
           "GeneratePresignedUrlLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GeneratePresignedUrlLambdaVersionPZwQ1eAFuJoSuvVCihmIeB4XdctsJGhN7KE5RnyIyU"
+              "Ref": "GeneratePresignedUrlLambdaVersionN4D6vnS2JVf7wrelYgj05wLNQw6uBIpGCHs018"
             },
             "Export": {
               "Name": "sls-python-pdf-chat-dev-GeneratePresignedUrlLambdaFunctionQualifiedArn"
@@ -1331,7 +1432,7 @@
           "UploadTriggerLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "UploadTriggerLambdaVersion1uu61QOnZfUKvTnFCSip4ixloSrfh04ULVwpHhMk8"
+              "Ref": "UploadTriggerLambdaVersion8nBwwrZtLhuYJyGhz4DQuF4w9KU9S0IBN1mCk17Kos"
             },
             "Export": {
               "Name": "sls-python-pdf-chat-dev-UploadTriggerLambdaFunctionQualifiedArn"
@@ -1340,7 +1441,7 @@
           "GetDocumentLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GetDocumentLambdaVersioneVpJjAASuowlui2WsAmp9uwGbvaeLQhbh2RMzNGQ"
+              "Ref": "GetDocumentLambdaVersionrEnbhofhuQFpQULoZiabNMFMShRwUmpk1UqArRzLGI"
             },
             "Export": {
               "Name": "sls-python-pdf-chat-dev-GetDocumentLambdaFunctionQualifiedArn"
@@ -1349,7 +1450,7 @@
           "GetAllDocumentsLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GetAllDocumentsLambdaVersionvmHvqxGeyXtqrOxelZB1IrHgy4Ro7rdgwY62Cpw8Lm4"
+              "Ref": "GetAllDocumentsLambdaVersion5kIiSXbLY9qxyx5SedLOdxSrkrfIY29GjxBz9MxC6BY"
             },
             "Export": {
               "Name": "sls-python-pdf-chat-dev-GetAllDocumentsLambdaFunctionQualifiedArn"
@@ -1358,7 +1459,7 @@
           "AddConversationLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "AddConversationLambdaVersion8qyowlUSoJbh4bP8sd1aURxWp86o5mbAFo8IHAZZVK0"
+              "Ref": "AddConversationLambdaVersionJw9ujQxpbXIGbTM1s0SzsAR4Zi0qgHthooywBG6Og"
             },
             "Export": {
               "Name": "sls-python-pdf-chat-dev-AddConversationLambdaFunctionQualifiedArn"
@@ -1367,7 +1468,7 @@
           "GenerateEmbeddingsLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GenerateEmbeddingsLambdaVersionDeR7l2djDO4Owbos6rUUkl6R0t2hAf0jRpsCtqyCHNQ"
+              "Ref": "GenerateEmbeddingsLambdaVersionEWzsp7m9x3e1YrP8iIqEJqs1FTTj8pZSqCS5r0"
             },
             "Export": {
               "Name": "sls-python-pdf-chat-dev-GenerateEmbeddingsLambdaFunctionQualifiedArn"
@@ -1376,7 +1477,7 @@
           "GenerateResponseLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GenerateResponseLambdaVersionOQAdn3llqKP9lR5zyCEKvxTFTeNipG6nOWjF7qW9eis"
+              "Ref": "GenerateResponseLambdaVersionaZcJrRaJHqQvoWXEsJzPBtqLrzrvF8dy4UPlwseFI4M"
             },
             "Export": {
               "Name": "sls-python-pdf-chat-dev-GenerateResponseLambdaFunctionQualifiedArn"
@@ -1414,6 +1515,16 @@
             },
             "Export": {
               "Name": "sls-python-pdf-chat-dev-HttpApiUrl"
+            }
+          },
+          "CognitoUserPool": {
+            "Value": {
+              "Ref": "CognitoUserPool"
+            }
+          },
+          "CognitoUserPoolClient": {
+            "Value": {
+              "Ref": "CognitoUserPoolClient"
             }
           }
         }
@@ -1502,25 +1613,35 @@
       },
       "vpc": {}
     },
+    "custom": {
+      "stackName": "python-pdf-chat-dev",
+      "documentBucket": "python-pdf-chat-dev-us-east-1-947403101409",
+      "cognitoUserPool": {
+        "Ref": "CognitoUserPool"
+      },
+      "issuerUrl": {
+        "Fn::Sub": "https://cognito-idp.us-east-1.amazonaws.com/${CognitoUserPool}"
+      }
+    },
     "pluginsData": {},
     "functions": {
       "GeneratePresignedUrl": {
         "handler": "src/generate_presigned_url/main.handler",
         "runtime": "python3.11",
+        "architecture": "arm64",
         "timeout": 29,
         "environment": {
-          "BUCKET": {
-            "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"GeneratePresignedUrlLambdaFunction\"][\"Properties\"][\"Environment\"][\"Variables\"][\"BUCKET\"]"
-          },
-          "REGION": {
-            "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"GeneratePresignedUrlLambdaFunction\"][\"Properties\"][\"Environment\"][\"Variables\"][\"REGION\"]"
-          }
+          "BUCKET": "python-pdf-chat-dev-us-east-1-947403101409",
+          "REGION": "us-east-1"
         },
         "events": [
           {
             "httpApi": {
               "path": "/generate-presigned-url",
-              "method": "get"
+              "method": "get",
+              "authorizer": {
+                "name": "cognitoAuthorizer"
+              }
             },
             "resolvedMethod": "GET",
             "resolvedPath": "/generate-presigned-url"
@@ -1530,12 +1651,12 @@
         "package": {},
         "memory": 1024,
         "vpc": {},
-        "versionLogicalId": "GeneratePresignedUrlLambdaVersionPZwQ1eAFuJoSuvVCihmIeB4XdctsJGhN7KE5RnyIyU"
+        "versionLogicalId": "GeneratePresignedUrlLambdaVersionN4D6vnS2JVf7wrelYgj05wLNQw6uBIpGCHs018"
       },
       "UploadTrigger": {
         "handler": "src/upload_trigger/main.handler",
         "runtime": "python3.11",
-        "timeout": 29,
+        "architecture": "arm64",
         "environment": {
           "DOCUMENT_TABLE": {
             "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"UploadTriggerLambdaFunction\"][\"Properties\"][\"Environment\"][\"Variables\"][\"DOCUMENT_TABLE\"]"
@@ -1546,16 +1667,12 @@
           "QUEUE": {
             "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"UploadTriggerLambdaFunction\"][\"Properties\"][\"Environment\"][\"Variables\"][\"QUEUE\"]"
           },
-          "BUCKET": {
-            "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"UploadTriggerLambdaFunction\"][\"Properties\"][\"Environment\"][\"Variables\"][\"BUCKET\"]"
-          }
+          "BUCKET": "python-pdf-chat-dev-us-east-1-947403101409"
         },
         "events": [
           {
             "s3": {
-              "bucket": {
-                "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"IamRoleCustomResourcesLambdaExecution\"][\"Properties\"][\"Policies\"][0][\"PolicyDocument\"][\"Statement\"][0][\"Resource\"][\"Fn::Join\"][1][5]"
-              },
+              "bucket": "python-pdf-chat-dev-us-east-1-947403101409",
               "event": "s3:ObjectCreated:*",
               "rules": [
                 {
@@ -1569,12 +1686,14 @@
         "name": "python-pdf-chat-dev-UploadTrigger",
         "package": {},
         "memory": 1024,
+        "timeout": 6,
         "vpc": {},
-        "versionLogicalId": "UploadTriggerLambdaVersion1uu61QOnZfUKvTnFCSip4ixloSrfh04ULVwpHhMk8"
+        "versionLogicalId": "UploadTriggerLambdaVersion8nBwwrZtLhuYJyGhz4DQuF4w9KU9S0IBN1mCk17Kos"
       },
       "GetDocument": {
         "handler": "src/get_document/main.handler",
         "runtime": "python3.11",
+        "architecture": "arm64",
         "timeout": 29,
         "environment": {
           "DOCUMENT_TABLE": {
@@ -1588,7 +1707,10 @@
           {
             "httpApi": {
               "path": "/doc/{documentid}/{conversationId}",
-              "method": "get"
+              "method": "get",
+              "authorizer": {
+                "name": "cognitoAuthorizer"
+              }
             },
             "resolvedMethod": "GET",
             "resolvedPath": "/doc/{documentid}/{conversationId}"
@@ -1598,11 +1720,12 @@
         "package": {},
         "memory": 1024,
         "vpc": {},
-        "versionLogicalId": "GetDocumentLambdaVersioneVpJjAASuowlui2WsAmp9uwGbvaeLQhbh2RMzNGQ"
+        "versionLogicalId": "GetDocumentLambdaVersionrEnbhofhuQFpQULoZiabNMFMShRwUmpk1UqArRzLGI"
       },
       "GetAllDocuments": {
         "handler": "src/get_all_documents/main.handler",
         "runtime": "python3.11",
+        "architecture": "arm64",
         "timeout": 29,
         "environment": {
           "DOCUMENT_TABLE": {
@@ -1613,7 +1736,10 @@
           {
             "httpApi": {
               "path": "/doc",
-              "method": "get"
+              "method": "get",
+              "authorizer": {
+                "name": "cognitoAuthorizer"
+              }
             },
             "resolvedMethod": "GET",
             "resolvedPath": "/doc"
@@ -1623,11 +1749,12 @@
         "package": {},
         "memory": 1024,
         "vpc": {},
-        "versionLogicalId": "GetAllDocumentsLambdaVersionvmHvqxGeyXtqrOxelZB1IrHgy4Ro7rdgwY62Cpw8Lm4"
+        "versionLogicalId": "GetAllDocumentsLambdaVersion5kIiSXbLY9qxyx5SedLOdxSrkrfIY29GjxBz9MxC6BY"
       },
       "AddConversation": {
         "handler": "src/add_conversation/main.handler",
         "runtime": "python3.11",
+        "architecture": "arm64",
         "timeout": 29,
         "environment": {
           "DOCUMENT_TABLE": {
@@ -1641,7 +1768,10 @@
           {
             "httpApi": {
               "path": "/doc/{documentid}",
-              "method": "post"
+              "method": "post",
+              "authorizer": {
+                "name": "cognitoAuthorizer"
+              }
             },
             "resolvedMethod": "POST",
             "resolvedPath": "/doc/{documentid}"
@@ -1651,19 +1781,18 @@
         "package": {},
         "memory": 1024,
         "vpc": {},
-        "versionLogicalId": "AddConversationLambdaVersion8qyowlUSoJbh4bP8sd1aURxWp86o5mbAFo8IHAZZVK0"
+        "versionLogicalId": "AddConversationLambdaVersionJw9ujQxpbXIGbTM1s0SzsAR4Zi0qgHthooywBG6Og"
       },
       "GenerateEmbeddings": {
         "handler": "src/generate_embeddings/main.handler",
         "runtime": "python3.11",
+        "architecture": "arm64",
         "timeout": 29,
         "environment": {
           "DOCUMENT_TABLE": {
             "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"GenerateEmbeddingsLambdaFunction\"][\"Properties\"][\"Environment\"][\"Variables\"][\"DOCUMENT_TABLE\"]"
           },
-          "BUCKET": {
-            "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"GenerateEmbeddingsLambdaFunction\"][\"Properties\"][\"Environment\"][\"Variables\"][\"BUCKET\"]"
-          }
+          "BUCKET": "python-pdf-chat-dev-us-east-1-947403101409"
         },
         "events": [
           {
@@ -1679,25 +1808,27 @@
         "package": {},
         "memory": 1024,
         "vpc": {},
-        "versionLogicalId": "GenerateEmbeddingsLambdaVersionDeR7l2djDO4Owbos6rUUkl6R0t2hAf0jRpsCtqyCHNQ"
+        "versionLogicalId": "GenerateEmbeddingsLambdaVersionEWzsp7m9x3e1YrP8iIqEJqs1FTTj8pZSqCS5r0"
       },
       "GenerateResponse": {
         "handler": "src/generate_response/main.handler",
         "runtime": "python3.11",
+        "architecture": "arm64",
         "timeout": 29,
         "environment": {
           "MEMORY_TABLE": {
             "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"GenerateResponseLambdaFunction\"][\"Properties\"][\"Environment\"][\"Variables\"][\"MEMORY_TABLE\"]"
           },
-          "BUCKET": {
-            "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"GenerateResponseLambdaFunction\"][\"Properties\"][\"Environment\"][\"Variables\"][\"BUCKET\"]"
-          }
+          "BUCKET": "python-pdf-chat-dev-us-east-1-947403101409"
         },
         "events": [
           {
             "httpApi": {
               "path": "/{documentid}/{conversationid}",
-              "method": "post"
+              "method": "post",
+              "authorizer": {
+                "name": "cognitoAuthorizer"
+              }
             },
             "resolvedMethod": "POST",
             "resolvedPath": "/{documentid}/{conversationid}"
@@ -1707,7 +1838,7 @@
         "package": {},
         "memory": 1024,
         "vpc": {},
-        "versionLogicalId": "GenerateResponseLambdaVersionOQAdn3llqKP9lR5zyCEKvxTFTeNipG6nOWjF7qW9eis"
+        "versionLogicalId": "GenerateResponseLambdaVersionaZcJrRaJHqQvoWXEsJzPBtqLrzrvF8dy4UPlwseFI4M"
       }
     },
     "resources": {
@@ -1715,9 +1846,7 @@
         "DocumentBucket": {
           "Type": "AWS::S3::Bucket",
           "Properties": {
-            "BucketName": {
-              "Fn::Sub": "${AWS::StackName}-${AWS::Region}-${AWS::AccountId}"
-            },
+            "BucketName": "python-pdf-chat-dev-us-east-1-947403101409",
             "CorsConfiguration": {
               "CorsRules": [
                 {
@@ -1758,12 +1887,8 @@
                   "Principal": "*",
                   "Action": "s3:*",
                   "Resource": [
-                    {
-                      "Fn::Sub": "arn:aws:s3:::${DocumentBucket}/*"
-                    },
-                    {
-                      "Fn::Sub": "arn:aws:s3:::${DocumentBucket}"
-                    }
+                    "arn:aws:s3:::python-pdf-chat-dev-us-east-1-947403101409/*",
+                    "arn:aws:s3:::python-pdf-chat-dev-us-east-1-947403101409"
                   ],
                   "Condition": {
                     "Bool": {
@@ -1773,9 +1898,7 @@
                 }
               ]
             },
-            "Bucket": {
-              "Ref": "DocumentBucket"
-            }
+            "Bucket": "python-pdf-chat-dev-us-east-1-947403101409"
           }
         },
         "EmbeddingQueue": {
@@ -1901,13 +2024,27 @@
           }
         }
       },
-      "Outputs": {}
+      "Outputs": {
+        "CognitoUserPool": {
+          "Value": {
+            "Ref": "CognitoUserPool"
+          }
+        },
+        "CognitoUserPoolClient": {
+          "Value": {
+            "Ref": "CognitoUserPoolClient"
+          }
+        }
+      }
     },
     "configValidationMode": "warn",
     "serviceFilename": "serverless.yml",
     "initialServerlessConfig": {
       "service": "python-pdf-chat",
       "frameworkVersion": "3",
+      "custom": {
+        "$ref": "$[\"service\"][\"custom\"]"
+      },
       "provider": {
         "$ref": "$[\"service\"][\"provider\"]"
       },
@@ -1920,10 +2057,10 @@
     },
     "layers": {},
     "isDashboardMonitoringPreconfigured": false,
-    "artifact": "C:\\Users\\ferna\\Documents\\cpa-vision\\DevOps\\lambda-apps\\python-pdf-chat\\backend\\.serverless\\python-pdf-chat.zip"
+    "artifact": "C:\\Users\\firej\\Documents\\cpa-vision\\DevOps\\pdf-app\\python-pdf-chat\\backend\\.serverless\\python-pdf-chat.zip"
   },
   "package": {
-    "artifactDirectoryName": "serverless/python-pdf-chat/dev/1716303424633-2024-05-21T14:57:04.633Z",
+    "artifactDirectoryName": "serverless/python-pdf-chat/dev/1716421024077-2024-05-22T23:37:04.077Z",
     "artifact": "python-pdf-chat.zip"
   }
 }
