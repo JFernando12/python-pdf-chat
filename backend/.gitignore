@@ -2,7 +2,10 @@
 # Created by https://www.gitignore.io/api/osx,linux,python,windows,pycharm,visualstudiocode
 
 ### Serverless Framework ###
-.serverless
+.serverless/
+
+### Node Module ###
+node_modules/
 
 ### SAM ###
 .aws-sam/

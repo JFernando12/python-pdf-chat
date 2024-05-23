@@ -30,6 +30,84 @@
       "layers": [
         "arn:aws:lambda:us-east-1:017000801446:layer:AWSLambdaPowertoolsPythonV2-Arm64:51"
       ],
+      "iam": {
+        "role": {
+          "statements": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:PutObject",
+                "s3:GetObject",
+                "s3:ListBucket"
+              ],
+              "Resource": "arn:aws:s3:::python-pdf-chat-dev-us-east-1-947403101409/*"
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "dynamodb:PutItem",
+                "dynamodb:GetItem",
+                "dynamodb:Query",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem"
+              ],
+              "Resource": {
+                "Fn::GetAtt": [
+                  "DocumentTable",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "dynamodb:PutItem",
+                "dynamodb:GetItem",
+                "dynamodb:Query",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem"
+              ],
+              "Resource": {
+                "Fn::GetAtt": [
+                  "MemoryTable",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "sqs:SendMessage",
+                "sqs:ReceiveMessage",
+                "sqs:DeleteMessage"
+              ],
+              "Resource": {
+                "Fn::GetAtt": [
+                  "EmbeddingQueue",
+                  "Arn"
+                ]
+              }
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "bedrock:InvokeModel"
+              ],
+              "Resource": "arn:aws:bedrock:*::foundation-model/amazon.titan-embed-text-v1"
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "bedrock:InvokeModel"
+              ],
+              "Resource": [
+                "arn:aws:bedrock:*::foundation-model/anthropic.claude-v2",
+                "arn:aws:bedrock:*::foundation-model/amazon.titan-embed-text-v1"
+              ]
+            }
+          ]
+        }
+      },
       "versionFunctions": true,
       "compiledCloudFormationTemplate": {
         "AWSTemplateFormatVersion": "2010-09-09",
@@ -205,6 +283,24 @@
                         ]
                       },
                       {
+                        "$ref": "$[\"service\"][\"provider\"][\"iam\"][\"role\"][\"statements\"][0]"
+                      },
+                      {
+                        "$ref": "$[\"service\"][\"provider\"][\"iam\"][\"role\"][\"statements\"][1]"
+                      },
+                      {
+                        "$ref": "$[\"service\"][\"provider\"][\"iam\"][\"role\"][\"statements\"][2]"
+                      },
+                      {
+                        "$ref": "$[\"service\"][\"provider\"][\"iam\"][\"role\"][\"statements\"][3]"
+                      },
+                      {
+                        "$ref": "$[\"service\"][\"provider\"][\"iam\"][\"role\"][\"statements\"][4]"
+                      },
+                      {
+                        "$ref": "$[\"service\"][\"provider\"][\"iam\"][\"role\"][\"statements\"][5]"
+                      },
+                      {
                         "Effect": "Allow",
                         "Action": [
                           "xray:PutTraceSegments",
@@ -257,7 +353,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/python-pdf-chat/dev/1716421024077-2024-05-22T23:37:04.077Z/python-pdf-chat.zip"
+                "S3Key": "serverless/python-pdf-chat/dev/1716427678939-2024-05-23T01:27:58.939Z/GeneratePresignedUrl.zip"
               },
               "Handler": "src/generate_presigned_url/main.handler",
               "Runtime": "python3.11",
@@ -297,7 +393,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/python-pdf-chat/dev/1716421024077-2024-05-22T23:37:04.077Z/python-pdf-chat.zip"
+                "S3Key": "serverless/python-pdf-chat/dev/1716427678939-2024-05-23T01:27:58.939Z/UploadTrigger.zip"
               },
               "Handler": "src/upload_trigger/main.handler",
               "Runtime": "python3.11",
@@ -348,7 +444,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/python-pdf-chat/dev/1716421024077-2024-05-22T23:37:04.077Z/python-pdf-chat.zip"
+                "S3Key": "serverless/python-pdf-chat/dev/1716427678939-2024-05-23T01:27:58.939Z/GetDocument.zip"
               },
               "Handler": "src/get_document/main.handler",
               "Runtime": "python3.11",
@@ -392,7 +488,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/python-pdf-chat/dev/1716421024077-2024-05-22T23:37:04.077Z/python-pdf-chat.zip"
+                "S3Key": "serverless/python-pdf-chat/dev/1716427678939-2024-05-23T01:27:58.939Z/GetAllDocuments.zip"
               },
               "Handler": "src/get_all_documents/main.handler",
               "Runtime": "python3.11",
@@ -433,7 +529,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/python-pdf-chat/dev/1716421024077-2024-05-22T23:37:04.077Z/python-pdf-chat.zip"
+                "S3Key": "serverless/python-pdf-chat/dev/1716427678939-2024-05-23T01:27:58.939Z/AddConversation.zip"
               },
               "Handler": "src/add_conversation/main.handler",
               "Runtime": "python3.11",
@@ -477,7 +573,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/python-pdf-chat/dev/1716421024077-2024-05-22T23:37:04.077Z/python-pdf-chat.zip"
+                "S3Key": "serverless/python-pdf-chat/dev/1716427678939-2024-05-23T01:27:58.939Z/GenerateEmbeddings.zip"
               },
               "Handler": "src/generate_embeddings/main.handler",
               "Runtime": "python3.11",
@@ -519,7 +615,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/python-pdf-chat/dev/1716421024077-2024-05-22T23:37:04.077Z/python-pdf-chat.zip"
+                "S3Key": "serverless/python-pdf-chat/dev/1716427678939-2024-05-23T01:27:58.939Z/GenerateResponse.zip"
               },
               "Handler": "src/generate_response/main.handler",
               "Runtime": "python3.11",
@@ -554,74 +650,74 @@
               "GenerateResponseLogGroup"
             ]
           },
-          "GeneratePresignedUrlLambdaVersionN4D6vnS2JVf7wrelYgj05wLNQw6uBIpGCHs018": {
+          "GeneratePresignedUrlLambdaVersionYOqeAGBmAnRb7BTAiAuPZwmPbG4KRVcY5C5R8bWSM": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GeneratePresignedUrlLambdaFunction"
               },
-              "CodeSha256": "WO1o/Xmjy/D0gfSP8Wq6V/F6z3ILDLoPuMlvUVCIKs8="
+              "CodeSha256": "6rnurp0YRtByJNOuYg2V9yDDAiGse8iNJOrSaJ2A6fc="
             }
           },
-          "UploadTriggerLambdaVersion8nBwwrZtLhuYJyGhz4DQuF4w9KU9S0IBN1mCk17Kos": {
+          "UploadTriggerLambdaVersionFKzUhxLuuJTQalUxJXVJFQovcXRIndcAWN7iIr2ePU": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "UploadTriggerLambdaFunction"
               },
-              "CodeSha256": "WO1o/Xmjy/D0gfSP8Wq6V/F6z3ILDLoPuMlvUVCIKs8="
+              "CodeSha256": "6rnurp0YRtByJNOuYg2V9yDDAiGse8iNJOrSaJ2A6fc="
             }
           },
-          "GetDocumentLambdaVersionrEnbhofhuQFpQULoZiabNMFMShRwUmpk1UqArRzLGI": {
-            "Type": "AWS::Lambda::Version",
-            "DeletionPolicy": "Retain",
-            "Properties": {
-              "FunctionName": {
-                "Ref": "GetDocumentLambdaFunction"
-              },
-              "CodeSha256": "WO1o/Xmjy/D0gfSP8Wq6V/F6z3ILDLoPuMlvUVCIKs8="
-            }
-          },
-          "GetAllDocumentsLambdaVersion5kIiSXbLY9qxyx5SedLOdxSrkrfIY29GjxBz9MxC6BY": {
-            "Type": "AWS::Lambda::Version",
-            "DeletionPolicy": "Retain",
-            "Properties": {
-              "FunctionName": {
-                "Ref": "GetAllDocumentsLambdaFunction"
-              },
-              "CodeSha256": "WO1o/Xmjy/D0gfSP8Wq6V/F6z3ILDLoPuMlvUVCIKs8="
-            }
-          },
-          "AddConversationLambdaVersionJw9ujQxpbXIGbTM1s0SzsAR4Zi0qgHthooywBG6Og": {
-            "Type": "AWS::Lambda::Version",
-            "DeletionPolicy": "Retain",
-            "Properties": {
-              "FunctionName": {
-                "Ref": "AddConversationLambdaFunction"
-              },
-              "CodeSha256": "WO1o/Xmjy/D0gfSP8Wq6V/F6z3ILDLoPuMlvUVCIKs8="
-            }
-          },
-          "GenerateEmbeddingsLambdaVersionEWzsp7m9x3e1YrP8iIqEJqs1FTTj8pZSqCS5r0": {
+          "GenerateEmbeddingsLambdaVersionhCmOCBUJcEJytFSSeFfp0pc4pI1UnAAjvHuADeW4FQ": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GenerateEmbeddingsLambdaFunction"
               },
-              "CodeSha256": "WO1o/Xmjy/D0gfSP8Wq6V/F6z3ILDLoPuMlvUVCIKs8="
+              "CodeSha256": "6rnurp0YRtByJNOuYg2V9yDDAiGse8iNJOrSaJ2A6fc="
             }
           },
-          "GenerateResponseLambdaVersionaZcJrRaJHqQvoWXEsJzPBtqLrzrvF8dy4UPlwseFI4M": {
+          "GetDocumentLambdaVersionGoZiiuUB9hEhW4T15J7cVn68PKsnEbud15DcisrTA": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "GetDocumentLambdaFunction"
+              },
+              "CodeSha256": "6rnurp0YRtByJNOuYg2V9yDDAiGse8iNJOrSaJ2A6fc="
+            }
+          },
+          "GenerateResponseLambdaVersionqlVk2nVccr4SpdEFt4ERXVVqFJkGfzzrskgfdNV0tJU": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GenerateResponseLambdaFunction"
               },
-              "CodeSha256": "WO1o/Xmjy/D0gfSP8Wq6V/F6z3ILDLoPuMlvUVCIKs8="
+              "CodeSha256": "6rnurp0YRtByJNOuYg2V9yDDAiGse8iNJOrSaJ2A6fc="
+            }
+          },
+          "AddConversationLambdaVersion8aGN8tSbAyXQGbaQ8HPA81kAdjYtALEcVAzLQe0d9I": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "AddConversationLambdaFunction"
+              },
+              "CodeSha256": "6rnurp0YRtByJNOuYg2V9yDDAiGse8iNJOrSaJ2A6fc="
+            }
+          },
+          "GetAllDocumentsLambdaVersionZoY8xkfFVk9UoUXovQRsqzJsHemZqwWqX4qi0akE2w": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "GetAllDocumentsLambdaFunction"
+              },
+              "CodeSha256": "6rnurp0YRtByJNOuYg2V9yDDAiGse8iNJOrSaJ2A6fc="
             }
           },
           "UploadTriggerCustomS31": {
@@ -748,7 +844,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/python-pdf-chat/dev/1716421024077-2024-05-22T23:37:04.077Z/custom-resources.zip"
+                "S3Key": "serverless/python-pdf-chat/dev/1716427678939-2024-05-23T01:27:58.939Z/custom-resources.zip"
               },
               "FunctionName": "python-pdf-chat-dev-custom-resource-existing-s3",
               "Handler": "s3/handler.handler",
@@ -901,13 +997,13 @@
               "TimeoutInMillis": 30000
             }
           },
-          "HttpApiRouteGetGenerateDashpresignedDashurl": {
+          "HttpApiRouteGetGeneratepresignedurl": {
             "Type": "AWS::ApiGatewayV2::Route",
             "Properties": {
               "ApiId": {
                 "Ref": "HttpApi"
               },
-              "RouteKey": "GET /generate-presigned-url",
+              "RouteKey": "GET /generate_presigned_url",
               "Target": {
                 "Fn::Join": [
                   "/",
@@ -1423,7 +1519,7 @@
           "GeneratePresignedUrlLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GeneratePresignedUrlLambdaVersionN4D6vnS2JVf7wrelYgj05wLNQw6uBIpGCHs018"
+              "Ref": "GeneratePresignedUrlLambdaVersionYOqeAGBmAnRb7BTAiAuPZwmPbG4KRVcY5C5R8bWSM"
             },
             "Export": {
               "Name": "sls-python-pdf-chat-dev-GeneratePresignedUrlLambdaFunctionQualifiedArn"
@@ -1432,55 +1528,55 @@
           "UploadTriggerLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "UploadTriggerLambdaVersion8nBwwrZtLhuYJyGhz4DQuF4w9KU9S0IBN1mCk17Kos"
+              "Ref": "UploadTriggerLambdaVersionFKzUhxLuuJTQalUxJXVJFQovcXRIndcAWN7iIr2ePU"
             },
             "Export": {
               "Name": "sls-python-pdf-chat-dev-UploadTriggerLambdaFunctionQualifiedArn"
             }
           },
-          "GetDocumentLambdaFunctionQualifiedArn": {
-            "Description": "Current Lambda function version",
-            "Value": {
-              "Ref": "GetDocumentLambdaVersionrEnbhofhuQFpQULoZiabNMFMShRwUmpk1UqArRzLGI"
-            },
-            "Export": {
-              "Name": "sls-python-pdf-chat-dev-GetDocumentLambdaFunctionQualifiedArn"
-            }
-          },
-          "GetAllDocumentsLambdaFunctionQualifiedArn": {
-            "Description": "Current Lambda function version",
-            "Value": {
-              "Ref": "GetAllDocumentsLambdaVersion5kIiSXbLY9qxyx5SedLOdxSrkrfIY29GjxBz9MxC6BY"
-            },
-            "Export": {
-              "Name": "sls-python-pdf-chat-dev-GetAllDocumentsLambdaFunctionQualifiedArn"
-            }
-          },
-          "AddConversationLambdaFunctionQualifiedArn": {
-            "Description": "Current Lambda function version",
-            "Value": {
-              "Ref": "AddConversationLambdaVersionJw9ujQxpbXIGbTM1s0SzsAR4Zi0qgHthooywBG6Og"
-            },
-            "Export": {
-              "Name": "sls-python-pdf-chat-dev-AddConversationLambdaFunctionQualifiedArn"
-            }
-          },
           "GenerateEmbeddingsLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GenerateEmbeddingsLambdaVersionEWzsp7m9x3e1YrP8iIqEJqs1FTTj8pZSqCS5r0"
+              "Ref": "GenerateEmbeddingsLambdaVersionhCmOCBUJcEJytFSSeFfp0pc4pI1UnAAjvHuADeW4FQ"
             },
             "Export": {
               "Name": "sls-python-pdf-chat-dev-GenerateEmbeddingsLambdaFunctionQualifiedArn"
             }
           },
+          "GetDocumentLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "GetDocumentLambdaVersionGoZiiuUB9hEhW4T15J7cVn68PKsnEbud15DcisrTA"
+            },
+            "Export": {
+              "Name": "sls-python-pdf-chat-dev-GetDocumentLambdaFunctionQualifiedArn"
+            }
+          },
           "GenerateResponseLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GenerateResponseLambdaVersionaZcJrRaJHqQvoWXEsJzPBtqLrzrvF8dy4UPlwseFI4M"
+              "Ref": "GenerateResponseLambdaVersionqlVk2nVccr4SpdEFt4ERXVVqFJkGfzzrskgfdNV0tJU"
             },
             "Export": {
               "Name": "sls-python-pdf-chat-dev-GenerateResponseLambdaFunctionQualifiedArn"
+            }
+          },
+          "AddConversationLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "AddConversationLambdaVersion8aGN8tSbAyXQGbaQ8HPA81kAdjYtALEcVAzLQe0d9I"
+            },
+            "Export": {
+              "Name": "sls-python-pdf-chat-dev-AddConversationLambdaFunctionQualifiedArn"
+            }
+          },
+          "GetAllDocumentsLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "GetAllDocumentsLambdaVersionZoY8xkfFVk9UoUXovQRsqzJsHemZqwWqX4qi0akE2w"
+            },
+            "Export": {
+              "Name": "sls-python-pdf-chat-dev-GetAllDocumentsLambdaFunctionQualifiedArn"
             }
           },
           "HttpApiId": {
@@ -1614,6 +1710,9 @@
       "vpc": {}
     },
     "custom": {
+      "pythonRequirements": {
+        "dockerizePip": true
+      },
       "stackName": "python-pdf-chat-dev",
       "documentBucket": "python-pdf-chat-dev-us-east-1-947403101409",
       "cognitoUserPool": {
@@ -1623,6 +1722,9 @@
         "Fn::Sub": "https://cognito-idp.us-east-1.amazonaws.com/${CognitoUserPool}"
       }
     },
+    "plugins": [
+      "serverless-python-requirements"
+    ],
     "pluginsData": {},
     "functions": {
       "GeneratePresignedUrl": {
@@ -1637,21 +1739,24 @@
         "events": [
           {
             "httpApi": {
-              "path": "/generate-presigned-url",
+              "path": "/generate_presigned_url",
               "method": "get",
               "authorizer": {
                 "name": "cognitoAuthorizer"
               }
             },
             "resolvedMethod": "GET",
-            "resolvedPath": "/generate-presigned-url"
+            "resolvedPath": "/generate_presigned_url"
           }
         ],
         "name": "python-pdf-chat-dev-GeneratePresignedUrl",
-        "package": {},
+        "module": ".",
+        "package": {
+          "artifact": "C:\\Users\\ferna\\Documents\\cpa-vision\\DevOps\\lambda-apps\\python-pdf-chat\\backend\\.serverless\\GeneratePresignedUrl.zip"
+        },
         "memory": 1024,
         "vpc": {},
-        "versionLogicalId": "GeneratePresignedUrlLambdaVersionN4D6vnS2JVf7wrelYgj05wLNQw6uBIpGCHs018"
+        "versionLogicalId": "GeneratePresignedUrlLambdaVersionYOqeAGBmAnRb7BTAiAuPZwmPbG4KRVcY5C5R8bWSM"
       },
       "UploadTrigger": {
         "handler": "src/upload_trigger/main.handler",
@@ -1684,11 +1789,14 @@
           }
         ],
         "name": "python-pdf-chat-dev-UploadTrigger",
-        "package": {},
+        "module": ".",
+        "package": {
+          "artifact": "C:\\Users\\ferna\\Documents\\cpa-vision\\DevOps\\lambda-apps\\python-pdf-chat\\backend\\.serverless\\UploadTrigger.zip"
+        },
         "memory": 1024,
         "timeout": 6,
         "vpc": {},
-        "versionLogicalId": "UploadTriggerLambdaVersion8nBwwrZtLhuYJyGhz4DQuF4w9KU9S0IBN1mCk17Kos"
+        "versionLogicalId": "UploadTriggerLambdaVersionFKzUhxLuuJTQalUxJXVJFQovcXRIndcAWN7iIr2ePU"
       },
       "GetDocument": {
         "handler": "src/get_document/main.handler",
@@ -1717,10 +1825,13 @@
           }
         ],
         "name": "python-pdf-chat-dev-GetDocument",
-        "package": {},
+        "module": ".",
+        "package": {
+          "artifact": "C:\\Users\\ferna\\Documents\\cpa-vision\\DevOps\\lambda-apps\\python-pdf-chat\\backend\\.serverless\\GetDocument.zip"
+        },
         "memory": 1024,
         "vpc": {},
-        "versionLogicalId": "GetDocumentLambdaVersionrEnbhofhuQFpQULoZiabNMFMShRwUmpk1UqArRzLGI"
+        "versionLogicalId": "GetDocumentLambdaVersionGoZiiuUB9hEhW4T15J7cVn68PKsnEbud15DcisrTA"
       },
       "GetAllDocuments": {
         "handler": "src/get_all_documents/main.handler",
@@ -1746,10 +1857,13 @@
           }
         ],
         "name": "python-pdf-chat-dev-GetAllDocuments",
-        "package": {},
+        "module": ".",
+        "package": {
+          "artifact": "C:\\Users\\ferna\\Documents\\cpa-vision\\DevOps\\lambda-apps\\python-pdf-chat\\backend\\.serverless\\GetAllDocuments.zip"
+        },
         "memory": 1024,
         "vpc": {},
-        "versionLogicalId": "GetAllDocumentsLambdaVersion5kIiSXbLY9qxyx5SedLOdxSrkrfIY29GjxBz9MxC6BY"
+        "versionLogicalId": "GetAllDocumentsLambdaVersionZoY8xkfFVk9UoUXovQRsqzJsHemZqwWqX4qi0akE2w"
       },
       "AddConversation": {
         "handler": "src/add_conversation/main.handler",
@@ -1778,10 +1892,13 @@
           }
         ],
         "name": "python-pdf-chat-dev-AddConversation",
-        "package": {},
+        "module": ".",
+        "package": {
+          "artifact": "C:\\Users\\ferna\\Documents\\cpa-vision\\DevOps\\lambda-apps\\python-pdf-chat\\backend\\.serverless\\AddConversation.zip"
+        },
         "memory": 1024,
         "vpc": {},
-        "versionLogicalId": "AddConversationLambdaVersionJw9ujQxpbXIGbTM1s0SzsAR4Zi0qgHthooywBG6Og"
+        "versionLogicalId": "AddConversationLambdaVersion8aGN8tSbAyXQGbaQ8HPA81kAdjYtALEcVAzLQe0d9I"
       },
       "GenerateEmbeddings": {
         "handler": "src/generate_embeddings/main.handler",
@@ -1798,17 +1915,20 @@
           {
             "sqs": {
               "arn": {
-                "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"IamRoleLambdaExecution\"][\"Properties\"][\"Policies\"][0][\"PolicyDocument\"][\"Statement\"][3][\"Resource\"][0]"
+                "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"IamRoleLambdaExecution\"][\"Properties\"][\"Policies\"][0][\"PolicyDocument\"][\"Statement\"][9][\"Resource\"][0]"
               },
               "batchSize": 1
             }
           }
         ],
         "name": "python-pdf-chat-dev-GenerateEmbeddings",
-        "package": {},
+        "module": ".",
+        "package": {
+          "artifact": "C:\\Users\\ferna\\Documents\\cpa-vision\\DevOps\\lambda-apps\\python-pdf-chat\\backend\\.serverless\\GenerateEmbeddings.zip"
+        },
         "memory": 1024,
         "vpc": {},
-        "versionLogicalId": "GenerateEmbeddingsLambdaVersionEWzsp7m9x3e1YrP8iIqEJqs1FTTj8pZSqCS5r0"
+        "versionLogicalId": "GenerateEmbeddingsLambdaVersionhCmOCBUJcEJytFSSeFfp0pc4pI1UnAAjvHuADeW4FQ"
       },
       "GenerateResponse": {
         "handler": "src/generate_response/main.handler",
@@ -1835,10 +1955,13 @@
           }
         ],
         "name": "python-pdf-chat-dev-GenerateResponse",
-        "package": {},
+        "module": ".",
+        "package": {
+          "artifact": "C:\\Users\\ferna\\Documents\\cpa-vision\\DevOps\\lambda-apps\\python-pdf-chat\\backend\\.serverless\\GenerateResponse.zip"
+        },
         "memory": 1024,
         "vpc": {},
-        "versionLogicalId": "GenerateResponseLambdaVersionaZcJrRaJHqQvoWXEsJzPBtqLrzrvF8dy4UPlwseFI4M"
+        "versionLogicalId": "GenerateResponseLambdaVersionqlVk2nVccr4SpdEFt4ERXVVqFJkGfzzrskgfdNV0tJU"
       }
     },
     "resources": {
@@ -2042,25 +2165,33 @@
     "initialServerlessConfig": {
       "service": "python-pdf-chat",
       "frameworkVersion": "3",
-      "custom": {
-        "$ref": "$[\"service\"][\"custom\"]"
-      },
       "provider": {
         "$ref": "$[\"service\"][\"provider\"]"
+      },
+      "package": {
+        "individually": true,
+        "artifactsS3KeyDirname": "serverless/python-pdf-chat/dev/code-artifacts",
+        "artifactDirectoryName": "serverless/python-pdf-chat/dev/1716427678939-2024-05-23T01:27:58.939Z"
+      },
+      "custom": {
+        "$ref": "$[\"service\"][\"custom\"]"
       },
       "functions": {
         "$ref": "$[\"service\"][\"functions\"]"
       },
       "resources": {
         "$ref": "$[\"service\"][\"resources\"]"
+      },
+      "plugins": {
+        "$ref": "$[\"service\"][\"plugins\"]"
       }
     },
     "layers": {},
-    "isDashboardMonitoringPreconfigured": false,
-    "artifact": "C:\\Users\\firej\\Documents\\cpa-vision\\DevOps\\pdf-app\\python-pdf-chat\\backend\\.serverless\\python-pdf-chat.zip"
+    "isDashboardMonitoringPreconfigured": false
   },
   "package": {
-    "artifactDirectoryName": "serverless/python-pdf-chat/dev/1716421024077-2024-05-22T23:37:04.077Z",
-    "artifact": "python-pdf-chat.zip"
+    "individually": true,
+    "artifactDirectoryName": "serverless/python-pdf-chat/dev/1716427678939-2024-05-23T01:27:58.939Z",
+    "artifact": ""
   }
 }
