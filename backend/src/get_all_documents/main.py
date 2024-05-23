@@ -3,18 +3,14 @@ import boto3
 from boto3.dynamodb.conditions import Key
 from aws_lambda_powertools import Logger
 
-
 DOCUMENT_TABLE = os.environ["DOCUMENT_TABLE"]
-
 
 ddb = boto3.resource("dynamodb")
 document_table = ddb.Table(DOCUMENT_TABLE)
 logger = Logger()
 
-
 @logger.inject_lambda_context(log_event=True)
 def handler(event, context):
-    logger.info(event["requestContext"]["authorizer"])
     user_id = event["requestContext"]["authorizer"]["jwt"]["claims"]["sub"]
 
     response = document_table.query(KeyConditionExpression=Key("userid").eq(user_id))

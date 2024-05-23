@@ -51,16 +51,17 @@ provider:
         - Effect: Allow
           Action:
             - bedrock:InvokeModel
-          Resource: arn:aws:bedrock:*::foundation-model/amazon.titan-embed-text-v1
-        - Effect: Allow
-          Action:
-            - bedrock:InvokeModel
           Resource:
-            - arn:aws:bedrock:*::foundation-model/anthropic.claude-v2
-            - arn:aws:bedrock:*::foundation-model/amazon.titan-embed-text-v1
+            - arn:aws:bedrock:*::foundation-model/anthropic.claude-3-sonnet-20240229-v1:0
+            - arn:aws:bedrock:*::foundation-model/cohere.embed-multilingual-v3
+
+plugins:
+  - serverless-python-requirements
 
 package: 
   individually: true
+  patterns:
+    - '!node_modules/**'
 
 custom:
   pythonRequirements:
@@ -68,12 +69,13 @@ custom:
   stackName: ${self:service}-${self:provider.stage}
   documentBucket: ${self:custom.stackName}-${self:provider.region}-${aws:accountId}
   cognitoUserPool: !Ref CognitoUserPool
-  issuerUrl: 
+  issuerUrl:
     Fn::Sub: "https://cognito-idp.${self:provider.region}.amazonaws.com/${CognitoUserPool}"
 
 functions:
   GeneratePresignedUrl:
-    handler: src/generate_presigned_url/main.handler
+    handler: main.handler
+    module: src/generate_presigned_url
     runtime: python3.11
     architecture: arm64
     timeout: 29
@@ -88,7 +90,8 @@ functions:
             name: cognitoAuthorizer
 
   UploadTrigger:
-    handler: src/upload_trigger/main.handler
+    handler: main.handler
+    module: src/upload_trigger
     runtime: python3.11
     architecture: arm64
     environment:
@@ -114,7 +117,7 @@ functions:
       MEMORY_TABLE: !Ref MemoryTable
     events:
       - httpApi:
-          path: /doc/{documentid}/{conversationId}
+          path: /doc/{documentid}/{conversationid}
           method: get
           authorizer:
             name: cognitoAuthorizer
@@ -134,7 +137,8 @@ functions:
             name: cognitoAuthorizer
   
   AddConversation:
-    handler: src/add_conversation/main.handler
+    handler: main.handler
+    module: src/add_conversation
     runtime: python3.11
     architecture: arm64
     timeout: 29
@@ -149,7 +153,8 @@ functions:
             name: cognitoAuthorizer
 
   GenerateEmbeddings:
-    handler: src/generate_embeddings/main.handler
+    handler: main.handler
+    module: src/generate_embeddings
     runtime: python3.11
     architecture: arm64
     timeout: 29
@@ -162,7 +167,8 @@ functions:
           batchSize: 1
 
   GenerateResponse:
-    handler: src/generate_response/main.handler
+    handler: main.handler
+    module: src/generate_response
     runtime: python3.11
     architecture: arm64
     timeout: 29
@@ -306,6 +312,3 @@ resources:
       Value: !Ref CognitoUserPool
     CognitoUserPoolClient:
       Value: !Ref CognitoUserPoolClient
-
-plugins:
-  - serverless-python-requirements

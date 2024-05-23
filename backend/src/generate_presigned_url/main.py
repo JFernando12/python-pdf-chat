@@ -4,10 +4,8 @@ from botocore.config import Config
 import shortuuid
 from aws_lambda_powertools import Logger
 
-
 BUCKET = os.environ["BUCKET"]
 REGION = os.environ["REGION"]
-
 
 s3 = boto3.client(
     "s3",
@@ -18,7 +16,6 @@ s3 = boto3.client(
 )
 logger = Logger()
 
-
 def s3_key_exists(bucket, key):
     try:
         s3.head_object(Bucket=bucket, Key=key)
@@ -26,10 +23,9 @@ def s3_key_exists(bucket, key):
     except:
         return False
 
-
 @logger.inject_lambda_context(log_event=True)
 def handler(event, context):
-    user_id = event["requestContext"]["authorizer"]["claims"]["sub"]
+    user_id = event["requestContext"]["authorizer"]["jwt"]["claims"]["sub"]
     file_name_full = event["queryStringParameters"]["file_name"]
     file_name = file_name_full.split(".pdf")[0]
 

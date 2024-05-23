@@ -24,7 +24,7 @@ def handler(event, context):
     fetch_k = event_body.get("fetch_k", 30)
     conversation_id = event["pathParameters"]["conversationid"]
 
-    user = event["requestContext"]["authorizer"]["claims"]["sub"]
+    user = event["requestContext"]["authorizer"]["jwt"]["claims"]["sub"]
 
     s3.download_file(BUCKET, f"{user}/{file_name}/index.faiss", "/tmp/index.faiss")
     s3.download_file(BUCKET, f"{user}/{file_name}/index.pkl", "/tmp/index.pkl")
