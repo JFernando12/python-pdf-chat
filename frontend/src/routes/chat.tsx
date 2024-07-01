@@ -135,7 +135,6 @@ const Document: React.FC = () => {
             submitMessage={submitMessage}
             handleKeyPress={handleKeyPress}
             handlePromptChange={handlePromptChange}
-            className=''
           />
         </div>
       )}
