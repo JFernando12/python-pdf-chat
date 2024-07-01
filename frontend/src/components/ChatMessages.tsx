@@ -20,8 +20,8 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
   handleKeyPress,
 }) => {
   return (
-    <div className="flex flex-col justify-between h-full overflow-y-auto col-span-8 p-5 border-l border-gray-200">
-      <div className="pb-5">
+    <div className="col-span-1">
+      <div className="h-[calc(100vh-200px)] overflow-y-auto p-3">
         <div className="grid gap-5">
           {conversation.messages.map((message, i) => (
             <div
@@ -61,7 +61,7 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
                 : "block w-full p-4 pl-4 text-sm text-gray-900 border border-gray-200 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
             }
             placeholder={
-              "Ask " + conversation.document.filename + " anything..."
+              "Ask anything..."
             }
           />
           {messageStatus === "idle" && (

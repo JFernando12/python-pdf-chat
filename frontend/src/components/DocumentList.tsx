@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { API } from "aws-amplify";
 import { Link } from "react-router-dom";
 import DocumentDetail from "./DocumentDetail";
-import { ArrowPathRoundedSquareIcon } from "@heroicons/react/24/outline";
+import { ArrowPathRoundedSquareIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Document } from "../common/types";
 import Loading from "../../public/loading-grid.svg";
 
@@ -20,6 +20,18 @@ const DocumentList: React.FC = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const onDelete = async (documentid: string) => {
+    console.log(`Deleting document ${documentid}`);
+    setDocuments(documents.map((document) => {
+      if (document.documentid === documentid) {
+        document.docstatus = "DELETING";
+      }
+      return document;
+    }));
+    await API.del("serverless-pdf-chat", `/doc/${documentid}`, {});
+    setDocuments(documents.filter((document) => document.documentid !== documentid));
+  };
 
   return (
     <div>
@@ -40,15 +52,28 @@ const DocumentList: React.FC = () => {
       <div className="grid grid-cols-3 gap-4">
         {documents &&
           documents.length > 0 &&
-          documents.map((document: Document) => (
-            <Link
-              to={`/doc/${document.documentid}/${document.conversations[0].conversationid}/`}
-              key={document.documentid}
-              className="block p-6 bg-white border border-gray-200 rounded hover:bg-gray-100"
-            >
-              <DocumentDetail {...document} />
-            </Link>
-          ))}
+          documents.map((document: Document) => {
+            const docStatus = document.docstatus;
+            const toRedirect = `/doc/${document.documentid}/${document.conversations[0].conversationid}/`;
+
+            return (
+              <div className="relative" key={document.documentid}>
+              <button
+                className="absolute -top-2 -right-1 inline-flex items-center text-red-600 hover:text-red-400"
+                onClick={() => onDelete(document.documentid)}
+              >
+                <TrashIcon className="w-8 h-8" />
+              </button>
+              <Link
+                to={docStatus === "READY" ? toRedirect : "#"}
+                key={document.documentid}
+                className="block p-6 bg-white border border-gray-200 rounded hover:bg-gray-100"
+              >
+                <DocumentDetail {...document} />
+              </Link>
+            </div>
+            )  
+          })}
       </div>
       {listStatus === "idle" && documents.length === 0 && (
         <div className="flex flex-col items-center mt-4">

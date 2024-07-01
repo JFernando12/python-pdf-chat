@@ -25,7 +25,7 @@ const Layout: React.FC = () => {
           userInfo={userInfo}
           handleSignOutClick={handleSignOutClick}
         />
-        <div className="container mt-6 mb-6">
+        <div className="mt-6 mb-6 ml-20 mr-20">
           <Outlet />
         </div>
       </div>

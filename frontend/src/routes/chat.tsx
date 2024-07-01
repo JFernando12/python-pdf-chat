@@ -5,11 +5,13 @@ import { Conversation } from "../common/types";
 import ChatSidebar from "../components/ChatSidebar";
 import ChatMessages from "../components/ChatMessages";
 import LoadingGrid from "../../public/loading-grid.svg";
+import PdfViewer from "../components/PdfViewer";
 
 const Document: React.FC = () => {
   const params = useParams();
   const navigate = useNavigate();
 
+  const [urlPdf, setUrlPf] = useState<string>("");
   const [conversation, setConversation] = useState<Conversation | null>(null);
   const [loading, setLoading] = React.useState<string>("idle");
   const [messageStatus, setMessageStatus] = useState<string>("idle");
@@ -25,12 +27,24 @@ const Document: React.FC = () => {
       `/doc/${params.documentid}/${conversationid}`,
       {}
     );
+
     setConversation(conversation);
     setLoading("idle");
   };
 
+  const fetchPdf = async (conversationid = params.conversationid) => {
+    const conversation = await API.get(
+      "serverless-pdf-chat",
+      `/doc/${params.documentid}/${conversationid}`,
+      {}
+    );
+
+    setUrlPf(conversation.url);
+  };
+
   useEffect(() => {
     fetchData();
+    fetchPdf();
   }, []);
 
   const handlePromptChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -105,14 +119,15 @@ const Document: React.FC = () => {
         </div>
       )}
       {conversation && (
-        <div className="grid grid-cols-12 border border-gray-200 rounded-lg">
-          <ChatSidebar
+        <div className="grid grid-cols-3 border border-gray-200 rounded-lg">
+          <PdfViewer file={urlPdf} className='col-span-2 h-full flex flex-col' />
+          {/* <ChatSidebar
             conversation={conversation}
             params={params}
             addConversation={addConversation}
             switchConversation={switchConversation}
             conversationListStatus={conversationListStatus}
-          />
+          /> */}
           <ChatMessages
             prompt={prompt}
             conversation={conversation}
@@ -120,6 +135,7 @@ const Document: React.FC = () => {
             submitMessage={submitMessage}
             handleKeyPress={handleKeyPress}
             handlePromptChange={handlePromptChange}
+            className=''
           />
         </div>
       )}

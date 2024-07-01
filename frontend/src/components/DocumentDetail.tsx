@@ -8,6 +8,7 @@ import {
   CheckCircleIcon,
   CloudIcon,
   CogIcon,
+  TrashIcon,
 } from "@heroicons/react/24/outline";
 
 const DocumentDetail: React.FC<Document> = (document: Document) => {
@@ -50,6 +51,14 @@ const DocumentDetail: React.FC<Document> = (document: Document) => {
             <span className="inline-flex items-center self-start bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded">
               <CheckCircleIcon className="w-4 h-4 mr-1" />
               Ready to chat
+            </span>
+          </div>
+        )}
+        {document.docstatus === "DELETING" && (
+          <div className="flex flex-row justify-center pt-4">
+            <span className="inline-flex items-center self-start bg-red-100 text-red-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded">
+              <TrashIcon className="w-4 h-4 mr-1" />
+              Deleting document
             </span>
           </div>
         )}
