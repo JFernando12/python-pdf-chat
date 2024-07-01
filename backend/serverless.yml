@@ -115,10 +115,27 @@ functions:
     environment:
       DOCUMENT_TABLE: !Ref DocumentTable
       MEMORY_TABLE: !Ref MemoryTable
+      BUCKET: ${self:custom.documentBucket}
     events:
       - httpApi:
           path: /doc/{documentid}/{conversationid}
           method: get
+          authorizer:
+            name: cognitoAuthorizer
+  
+  DeleteDocument:
+    handler: src/delete_document/main.handler
+    runtime: python3.11
+    architecture: arm64
+    timeout: 29
+    environment:
+      DOCUMENT_TABLE: !Ref DocumentTable
+      MEMORY_TABLE: !Ref MemoryTable
+      BUCKET: ${self:custom.documentBucket}
+    events:
+      - httpApi:
+          path: /doc/{documentid}
+          method: delete
           authorizer:
             name: cognitoAuthorizer
 
