@@ -1,5 +1,4 @@
 import { CloudIcon } from "@heroicons/react/24/outline";
-import GitHub from "../../public/github.svg";
 
 const Footer: React.FC = () => {
   return (
